@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.2.7
+// @version      1.2.8
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -58,7 +58,10 @@ var users = {
     , fog: 'fog'
   }
   , players = []
-  , playerColors = {}
+  , playerColors = {
+      fog: 'unknown'
+    , unknown: 'fog'
+  }
   , playerPollInterval
   , treatyPollInterval
   , hubotLocation = 'https://hubot-gregcochard.rhcloud.com/hubot/';
@@ -356,25 +359,19 @@ $(document).ready(function(){
         var counts = {};
         $('.tt-color').each(function(idx,el){
             el = $(el);
-            var color = el.find('.tt-inner').text().toLowerCase();
-            if(!color){
-                color = el.attr('class').replace(/.*tc-(fog|[\d]).*/,'$1');
-                color = colorMap[color];
-            }
+            var color = el.attr('class').replace(/.*tc-(fog|[\d]).*/,'$1');
+            color = colorMap[color];
             colors[color] = colors[color] || 0;
             colors[color]++;
             var count = el.find('a').text()|0;
             counts[color] = counts[color] || 0;
             counts[color] += count;
         });
-        colors = _.map(colors,function(count,color){
-            return '<li>' + playerColors[color] + ': ' + (count-1) + '</li>';
-        });
-        $('#hud #colors').html(colors);
-        counts = _.map(counts,function(count,color){
+        function mapCount(count,color){
             return '<li>' + playerColors[color] + ': ' + count + '</li>';
-        });
-        $('#hud #counts').html(counts);
+        }
+        $('#hud #colors').html(_.map(colors,mapCount));
+        $('#hud #counts').html(_.map(counts,mapCount));
         return oldRunUpdates.call(this,result);
     };
     var currDead = [];
