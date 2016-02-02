@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.2.6
+// @version      1.2.7
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -55,6 +55,7 @@ var users = {
     , 8: 'yellow'
     , cyan: 9
     , 9: 'cyan'
+    , fog: 'fog'
   }
   , players = []
   , playerColors = {}
@@ -403,9 +404,14 @@ $(document).ready(function(){
         players = players.map(function(idx,v){
             var $v = $(v);
             // set the color of the player
-            var node = $v.parent().parent().children(':last').children(':last').children(':last');
-            playerColors[$v.text()] = node.text().toLowerCase();
-            playerColors[node.text().toLowerCase()] = $v.text()
+            var color = $v.parent().parent().children(':last').children(':last').children(':last').text();
+            // if colorblind settings off, do this instead
+            if(!color){
+                color = $v.parent().parent().children(':last').children(':last').attr('src').split('/').pop().split('.')[0];
+                color = colorMap[color];
+            }
+            playerColors[$v.text()] = color.toLowerCase();
+            playerColors[color.toLowerCase()] = $v.text()
             return $v.html();
         });
         if(!players.length){
