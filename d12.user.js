@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.2.4
+// @version      1.2.5
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -42,7 +42,7 @@ var users = {
   , hubotLocation = 'https://hubot-gregcochard.rhcloud.com/hubot/';
 //var hidden = false;
 $(document).ready(function(){
-        'use strict';
+    'use strict';
     function colorDice(roll){
         var colors = ['green','yellow','red'], idx = 0;
         if(roll.attack[0]<=roll.defend[0]){
@@ -188,7 +188,7 @@ $(document).ready(function(){
                     console.log(err);
                     return showTreatyError(err);
                 }
-                return setTimeout(pollTreaties,100*2<<treatyErrors);
+                return setTimeout(pollTreaties,100*(2<<treatyErrors));
             }
             return showTreaties(data);
         });
@@ -392,17 +392,17 @@ $(document).ready(function(){
         newPlayer = newPlayer.html();
         return newPlayer;
     }
-    setTimeout(function(){
-        var oldShowNotification = playGame.showNotificationBanner;
-        playGame.showNotificationBanner = function(color, message){
-            switch(message){
-            case 'Turn finished.':
-                pollPlayer();
-                break;
-            }
-            return oldShowNotification.apply(this,Array.prototype.slice.call(arguments));
-        };
-    },2000);
+    
+    var oldShowNotification = playGame.showNotificationBanner;
+    playGame.showNotificationBanner = function(color, message){
+        switch(message){
+        case 'Turn finished.':
+            pollPlayer();
+            break;
+        }
+        return oldShowNotification.apply(this,Array.prototype.slice.call(arguments));
+    };
+
     function pollPlayer(){
         var newPlayer = getPlayer();
         if(!curPlayer){
@@ -415,8 +415,8 @@ $(document).ready(function(){
         }
     }
     pollPlayer();
-    // fallback to polling at 300s interval if change detection doesn't work
-    playerPollInterval = setInterval(pollPlayer,300000);
+    // fallback to polling at 30s interval if change detection doesn't work
+    playerPollInterval = setInterval(pollPlayer,30000);
     
     setTimeout(pollTreaties,2000);
     // poll treaties at a 15 second interval
