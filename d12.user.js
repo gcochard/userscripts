@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.2.5
+// @version      1.2.6
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -21,25 +21,47 @@
 /*eslint-env browser*/
 /*eslint no-console: 0*/
 console.log('injected!');
+
 var users = {
-    gcochard: 'greg'
-  , greg: 'gcochard'
-  , kwren: 'kwren'
-  , ryanbmilbourne: 'ryan'
-  , ryan: 'ryanbmilbourne'
-  , jobratt: 'jobratt'
-  , mmacfreier: 'mmacfreier'
-  , justinb: 'justin'
-  , justin: 'justinb'
-  , loneWolf55: 'channel'
-  , suntan: 'tanleach1001'
-  , tanleach1001: 'suntan'
-}
+      gcochard: 'greg'
+    , greg: 'gcochard'
+    , kwren: 'kwren'
+    , ryanbmilbourne: 'ryan'
+    , ryan: 'ryanbmilbourne'
+    , jobratt: 'jobratt'
+    , mmacfreier: 'mmacfreier'
+    , justinb: 'justin'
+    , justin: 'justinb'
+    , loneWolf55: 'channel'
+    , suntan: 'tanleach1001'
+    , tanleach1001: 'suntan'
+  }
+  , colorMap = {
+      green: 1
+    , 1: 'green'
+    , blue: 2
+    , 2: 'blue'
+    , red: 3
+    , 3: 'red'
+    , pink: 4
+    , 4: 'pink'
+    , purple: 5
+    , 5: 'purple'
+    , orange: 6
+    , 6: 'orange'
+    , black: 7
+    , 7: 'black'
+    , yellow: 8
+    , 8: 'yellow'
+    , cyan: 9
+    , 9: 'cyan'
+  }
   , players = []
   , playerColors = {}
   , playerPollInterval
   , treatyPollInterval
   , hubotLocation = 'https://hubot-gregcochard.rhcloud.com/hubot/';
+
 //var hidden = false;
 $(document).ready(function(){
     'use strict';
@@ -334,6 +356,10 @@ $(document).ready(function(){
         $('.tt-color').each(function(idx,el){
             el = $(el);
             var color = el.find('.tt-inner').text().toLowerCase();
+            if(!color){
+                color = el.attr('class').replace(/.*tc-(fog|[\d]).*/,'$1');
+                color = colorMap[color];
+            }
             colors[color] = colors[color] || 0;
             colors[color]++;
             var count = el.find('a').text()|0;
