@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         D12 turn checker for slack
-// @namespace    https://hubot-gregcochard.rhcloud.com/hubot
-// @updateURL    https://hubot-gregcochard.rhcloud.com/hubot/d12.user.js
-// @version      1.2.4
+// @namespace    https://gist.github.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/5643ea2d0f3041005ad37877ce78134c5ab401e6/
+// @updateURL    https://gist.github.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/5643ea2d0f3041005ad37877ce78134c5ab401e6/d12.user.js
+// @version      1.0.0
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -31,7 +31,7 @@ var users = {
     , loneWolf55: 'channel'
     , suntan: 'tanleach1001'
     , tanleach1001: 'suntan'
-}, players = [], playerColors = {}, playerPollInterval, treatyPollInterval;
+}, players = [], playerColors = {}, playerPollInterval, treatyPollInterval, hubotLocation = 'https://hubot-gregcochard.rhcloud.com/hubot/';
 
 function colorDice(roll){
     var colors = ['green','yellow','red'], idx = 0;
@@ -85,7 +85,7 @@ function lodashloaded(){
             }
 
             $.ajax({
-                url: 'https://hubot-gregcochard.rhcloud.com/hubot/pushturn',
+                url: hubotLocation+'pushturn',
                 method: 'GET',
                 success: function(){
                     console.log(arguments);
@@ -103,7 +103,7 @@ function lodashloaded(){
 
         function reportDeaths(deaths){
             $.ajax({
-                url: 'https://hubot-gregcochard.rhcloud.com/hubot/pushdeath',
+                url: hubotLocation+'pushdeath',
                 method: 'POST',
                 success: function(){
                     console.log(arguments);
@@ -121,7 +121,7 @@ function lodashloaded(){
             'use strict';
             var called = false;
             $.ajax({
-                url: 'https://hubot-gregcochard.rhcloud.com/hubot/treaties',
+                url: hubotLocation+'treaties',
                 method: 'GET',
                 success: function(data){
                     if(called){ return; }
@@ -237,7 +237,7 @@ function lodashloaded(){
 
         function sendDiceToHubot(player, attack, defend){
             $.ajax({
-                url: 'https://hubot-gregcochard.rhcloud.com/hubot/pushdice',
+                url: hubotLocation+'pushdice',
                 method: 'POST',
                 success: function(){
                     var q = getQueue();
@@ -287,7 +287,7 @@ function lodashloaded(){
                 player = player || detectMe();
                 var game = window.location.pathname.split('/').pop();
                 $.ajax({
-                    url: 'https://hubot-gregcochard.rhcloud.com/hubot/dice?game='+game,
+                    url: hubotLocation+'dice?game='+game,
                     method: 'GET',
                     success: function(dice){
                         if(!(dice instanceof Array)){
