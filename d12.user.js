@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.2.9
+// @version      1.2.10
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -104,6 +104,10 @@ $(document).ready(function(){
             });
             if(!valid){
                 return;
+            }
+            if(player.length === 1){
+                // for a single one, just make it a string
+                player = player[0];
             }
         } else {
             player = users[player];
@@ -365,7 +369,7 @@ $(document).ready(function(){
     var oldRunUpdates = playGame.runUpdates;
     playGame.runUpdates = function(result){
         if(result.winner){
-            signalToHubot(result.winner.names.join(', '), true);
+            signalToHubot(result.winner.names, true);
             clearInterval(playerPollInterval);
             clearInterval(treatyPollInterval);
         }
@@ -437,7 +441,7 @@ $(document).ready(function(){
     }
 
     function detectWinner(){
-        var winners = $('td.status.winner').parent().find(':nth(3)').map(function(w){
+        var winners = $('td.status.winner').parent().find(':nth(3)').map(function(i,w){
             return $(w).text();
         });
         return winners;
