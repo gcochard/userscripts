@@ -94,7 +94,21 @@ $(document).ready(function(){
     
     function signalToHubot(player,ended){
         'use strict';
-        if(!users[player]){
+        if(player instanceof Array){
+            var valid = true;
+            player = player.map(function(p){
+                if(!users[p]){
+                    valid = false;
+                }
+                return users[p];
+            });
+            if(!valid){
+                return;
+            }
+        } else {
+            player = users[player];
+        }
+        if(!player){
             return;
         }
     
@@ -108,13 +122,13 @@ $(document).ready(function(){
                 console.error(arguments);
             },
             data: {
-                user: users[player],
+                user: player,
                 from: detectMe(),
                 ended: ended
             }
         });
     }
-    
+
     function reportDeaths(deaths){
         $.ajax({
             url: hubotLocation+'pushdeath',
@@ -421,6 +435,13 @@ $(document).ready(function(){
         newPlayer = newPlayer.html();
         return newPlayer;
     }
+
+    function detectWinner(){
+        var winners = $('td.status.winner').parent().find(':nth(3)').map(function(w){
+            return $(w).text();
+        });
+        return winners;
+    }
     
     var oldShowNotification = playGame.showNotificationBanner;
     playGame.showNotificationBanner = function(color, message){
@@ -436,6 +457,10 @@ $(document).ready(function(){
         var newPlayer = getPlayer();
         if(!curPlayer){
             curPlayer = newPlayer;
+            if(!newPlayer){
+                curPlayer = detectWinner();
+                return signalToHubot(curPlayer,true);
+            }
             signalToHubot(curPlayer);
         }
         if(curPlayer && newPlayer && curPlayer !== newPlayer){
