@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.2.10
+// @version      1.2.11
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -443,7 +443,7 @@ $(document).ready(function(){
     function detectWinner(){
         var winners = $('td.status.winner').parent().find(':nth(3)').map(function(i,w){
             return $(w).text();
-        });
+        }).toArray();
         return winners;
     }
     
