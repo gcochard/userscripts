@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         D12 turn checker for slack
-// @namespace    https://gist.github.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/5643ea2d0f3041005ad37877ce78134c5ab401e6/
-// @updateURL    https://gist.github.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/5643ea2d0f3041005ad37877ce78134c5ab401e6/d12.user.js
+// @namespace    https://hubot-gregcochard.rhcloud.com/hubot
+// @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/master/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
 // @version      1.0.1
