@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.2.14
+// @version      1.3.0
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -134,6 +134,27 @@ $(document).ready(function(){
             }
         });
     }, 5000);
+
+    function signalJoinToHubot(player){
+        'use strict';
+        if(!player){
+            return;
+        }
+    
+        $.ajax({
+            url: hubotLocation+'pushjoin',
+            method: 'POST',
+            success: function(){
+                console.log(arguments);
+            },
+            failure: function(){
+                console.error(arguments);
+            },
+            data: {
+                user: player
+            }
+        });
+    }
 
     function reportDeaths(deaths){
         $.ajax({
@@ -367,6 +388,15 @@ $(document).ready(function(){
         sendDiceToHubot(getPlayer(),att,def);
         return oldShowDice.call(this,att,att_color,def,def_color);
     };
+
+    $('.join-game-submit').on('click',function jointrigger(){
+    $('.join-game-submit').off('click',jointrigger);
+        var me = detectMe();
+        if(!me){
+            return setTimeout(jointrigger,100);
+        }
+        return signalJoinToHubot(me);
+    });
 
     var oldRunUpdates = playGame.runUpdates;
     playGame.runUpdates = function(result){
