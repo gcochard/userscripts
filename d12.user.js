@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.5.0
+// @version      1.5.1
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -391,6 +391,7 @@ $(document).ready(function(){
             url: hubotLocation+'dice?game='+game,
             method: 'GET',
             success: function(dice){
+                var oldCount = $('#dice li').length, newCount = 0;
                 if(!(dice instanceof Array)){
                     console.log('no dice for this game yet :(');
                     return;
@@ -403,9 +404,13 @@ $(document).ready(function(){
                     return '<li style="color: '+color+'">'+roll.player+': attack('+roll.attack.join(', ')+') defend('+roll.defend.join(', ')+')</li>';
                 }).filter(function(r){
                     return !!r;
-                }).join('');
-                $dice.html(dicehtml);
-                $dice.scrollTop($dice.prop('scrollHeight'));
+                });
+                newCount = dicehtml.length;
+                dicehtml = dicehtml.join('');
+                if(oldCount !== newCount){
+                    $dice.html(dicehtml);
+                    $dice.scrollTop($dice.prop('scrollHeight'));
+                }
             },
             failure: function(){
                 
