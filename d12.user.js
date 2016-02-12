@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.4.1
+// @version      1.4.2
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -156,7 +156,7 @@ $(document).ready(function(){
         });
     }
 
-    function signalStartToHubot(){
+    function signalStartToHubot(starter){
         'use strict';
     
         $.ajax({
@@ -169,7 +169,8 @@ $(document).ready(function(){
                 console.error(arguments);
             },
             data: {
-                user: detectMe()
+                user: starter,
+                from: detectMe()
             }
         });
     }
@@ -370,8 +371,12 @@ $(document).ready(function(){
         return $('#players-tab table tr').length;
     }
 
+    function getStarter(){
+        return $('#players-tab table tr > .name > a').text();
+    }
+
     if(numPlayers() === 1){
-        signalStartToHubot();
+        signalStartToHubot(getStarter());
     }
 
     function fetchDiceFromHubot(player){
