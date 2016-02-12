@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.3.0
+// @version      1.4.0
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -152,6 +152,24 @@ $(document).ready(function(){
             },
             data: {
                 user: player
+            }
+        });
+    }
+
+    function signalStartToHubot(){
+        'use strict';
+    
+        $.ajax({
+            url: hubotLocation+'pushstart',
+            method: 'POST',
+            success: function(){
+                console.log(arguments);
+            },
+            failure: function(){
+                console.error(arguments);
+            },
+            data: {
+                user: detectMe()
             }
         });
     }
@@ -328,6 +346,33 @@ $(document).ready(function(){
     $('#toggle-hud').on('click',function(){
         $hud.toggle();
     });
+
+    /*
+    var $larger = $('#map-larger').clone().attr({
+        id: 'map-even-larger'
+    });
+    $larger.find('a').text('Largest');
+    $('#map-larger').parent().prepend($larger);
+
+    $larger.find('a').removeAttr('onclick');
+    $larger.find('a').click(function(){
+        // set the size of both the map and the territories to double
+        $('#map').css({
+            'background-size': '100%',
+            width: '1024px',
+            height: '768px'
+        });
+        $('.territory-large').css();
+    });
+    */
+
+    function numPlayers(){
+        return $('#players-tab table tr').length;
+    }
+
+    if(numPlayers === 1){
+        signalStartToHubot();
+    }
 
     function fetchDiceFromHubot(player){
         player = player || detectMe();
