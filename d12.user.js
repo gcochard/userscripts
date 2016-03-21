@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.5.4
+// @version      1.5.5
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -515,7 +515,7 @@ $(document).ready(function(){
 
     var oldRunUpdates = playGame.runUpdates;
     playGame.runUpdates = function(result){
-        storeUpdate(result);
+        //storeUpdate(result);
         if(result.winner){
             signalToHubot(result.winner.names, true);
             clearInterval(playerPollInterval);
