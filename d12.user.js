@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.5.2
+// @version      1.5.4
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -35,6 +35,7 @@ var users = {
     , loneWolf55: 'channel'
     , suntan: 'tanleach1001'
     , tanleach1001: 'suntan'
+    , johnsgill3: 'johnsgill3'
   }
   , colorMap = {
       green: 1
@@ -68,7 +69,6 @@ var users = {
   , treatyPollInterval
   , hubotLocation = 'https://hubot-gregcochard.rhcloud.com/hubot/';
 
-//var hidden = false;
 $(document).ready(function(){
     'use strict';
     function colorDice(roll){
@@ -84,16 +84,16 @@ $(document).ready(function(){
         }
         return colors[idx];
     }
-    
+
     function detectMe(){
         var me = diveBuddy(playGame,'me.username','');
-    
+
         if(!me){
             me = $('.nav-list.pull-left a:first').text();
         }
         return me;
     }
-    
+
     var signalToHubot = _.debounce(function chattySignalToHubot(player,ended){
         'use strict';
         if(player instanceof Array){
@@ -117,7 +117,7 @@ $(document).ready(function(){
         if(!player){
             return;
         }
-    
+
         $.ajax({
             url: hubotLocation+'pushturn',
             method: 'GET',
@@ -140,7 +140,7 @@ $(document).ready(function(){
         if(!player){
             return;
         }
-    
+
         $.ajax({
             url: hubotLocation+'pushjoin',
             method: 'POST',
@@ -193,7 +193,7 @@ $(document).ready(function(){
             }
         });
     }
-    
+
     function fetchTreaties(cb){
         'use strict';
         var called = false;
@@ -212,15 +212,15 @@ $(document).ready(function(){
             }
         });
     }
-    
+
     function showTreatyError(err){
         'use strict';
         console.log(err);
-        
+
         var treatyErr = err.statusText;
         $treaties.html($('li').attr('id','treaty-error').html(treatyErr));
     }
-    
+
     // inject our treaty container
     var $treaties = $('#notifications').clone().attr({id:'treaties',class:'treaties notifications'});
     $('#notifications').parent().append($treaties);
@@ -228,7 +228,7 @@ $(document).ready(function(){
     $('#toggle-treaties').on('click',function(){
         $treaties.toggle();
     });
-    
+
     function showTreaties(data){
         'use strict';
         //console.log(data);
@@ -261,7 +261,7 @@ $(document).ready(function(){
         });
         return;
     }
-    
+
     var reqs = 0, pollErrors = 0;
     function pollTreaties(){
         'use strict';
@@ -282,30 +282,77 @@ $(document).ready(function(){
             return showTreaties(data);
         });
     }
-    
-    function queueDice(p, a, d){
-        var q = window.localStorage.getItem('diceQueue');
-        if(q){
-            q = JSON.parse(q);
+
+    function storeDice(p, a, ac, d, dc){
+        var game = window.location.pathname.split('/').pop();
+        var ls = window.localStorage.getItem('diceStore');
+        var entry = {p: p, a: a, ac: ac, d: d, dc: dc, t: Date.now()};
+        if(ls){
+            ls = JSON.parse(ls);
+            if(!ls[game]){
+                ls[game] = [];
+            }
         } else {
-            q = {p:'',a:0,d:0};
+            ls = {};
+            ls[game] = [];
         }
+        ls[game].push(entry);
+        window.localStorage.setItem('diceStore',JSON.stringify(ls));
+    }
+
+    function storeUpdate(u){
+        var game = window.location.pathname.split('/').pop();
+        var ls = window.localStorage.getItem('updateStore');
+        var entry = {u: u, t: Date.now()};
+        if(ls){
+            ls = JSON.parse(ls);
+            if(!ls[game]){
+                ls[game] = [];
+            }
+        } else {
+            ls = {};
+            ls[game] = [];
+        }
+        ls[game].push(entry);
+        window.localStorage.setItem('updateStore',JSON.stringify(ls));
+    }
+
+    function fetchLocalDice(){
+        var game = window.location.pathname.split('/').pop();
+        var ls = window.localStorage.getItem('diceStore');
+        return diveBuddy(JSON.parse(ls),game,null);
+    }
+
+    function queueDice(p, a, d){
+        var queue = window.localStorage.getItem('diceQueue');
+        if(queue){
+            queue = JSON.parse(queue);
+        } else {
+            queue = [];
+        }
+        var q = {p:'',a:0,d:0};
         q.p = p;
         q.a += a;
         q.d += d;
+        queue.push(q);
         window.localStorage.setItem('diceQueue',JSON.stringify(q));
     }
-    
+
     function getQueue(){
-        var q = window.localStorage.getItem('diceQueue');
-        if(q){
-            q = JSON.parse(q);
-            window.localStorage.clear();
+        var queue = window.localStorage.getItem('diceQueue');
+        if(queue){
+            queue = JSON.parse(queue);
+            var q = queue.shift();
+            if(!queue.length){
+                window.localStorage.clear();
+            } else {
+                window.localStorage.setItem('diceQueue',JSON.stringify(queue));
+            }
             return q;
         }
         return null;
     }
-    
+
     function sendDiceToHubot(player, attack, defend){
         $.ajax({
             url: hubotLocation+'pushdice',
@@ -384,36 +431,43 @@ $(document).ready(function(){
         signalStartToHubot(getStarter());
     }
 
+    function populateDiceGui(dice){
+        var oldCount = $('#dice li').length, newCount = 0;
+        if(!(dice instanceof Array)){
+            console.log('no dice for this game yet :(');
+            return;
+        }
+        var dicehtml = dice.map(function(roll){
+            if(roll.player !== player && !fog){
+                return;
+            }
+            var color = colorDice(roll);
+            return '<li style="color: '+color+'">'+roll.player+': attack('+roll.attack.join(', ')+') defend('+roll.defend.join(', ')+')</li>';
+        }).filter(function(r){
+            return !!r;
+        });
+        newCount = dicehtml.length;
+        dicehtml = dicehtml.join('');
+        if(oldCount !== newCount){
+            $dice.html(dicehtml);
+            $dice.scrollTop($dice.prop('scrollHeight'));
+        }
+    }
+
     function fetchDiceFromHubot(player){
         player = player || detectMe();
         var game = window.location.pathname.split('/').pop();
+        /*
+        if(fog){
+            return populateDiceGui(fetchLocalDice());
+        }
+        */
         $.ajax({
             url: hubotLocation+'dice?game='+game,
             method: 'GET',
-            success: function(dice){
-                var oldCount = $('#dice li').length, newCount = 0;
-                if(!(dice instanceof Array)){
-                    console.log('no dice for this game yet :(');
-                    return;
-                }
-                var dicehtml = dice.map(function(roll){
-                    if(roll.player !== player && !fog){
-                        return;
-                    }
-                    var color = colorDice(roll);
-                    return '<li style="color: '+color+'">'+roll.player+': attack('+roll.attack.join(', ')+') defend('+roll.defend.join(', ')+')</li>';
-                }).filter(function(r){
-                    return !!r;
-                });
-                newCount = dicehtml.length;
-                dicehtml = dicehtml.join('');
-                if(oldCount !== newCount){
-                    $dice.html(dicehtml);
-                    $dice.scrollTop($dice.prop('scrollHeight'));
-                }
-            },
+            success: populateDiceGui,
             failure: function(){
-                
+
             }
         });
     }
@@ -442,10 +496,11 @@ $(document).ready(function(){
             };
         })(this));
     };
-    
+
     var oldShowDice = playGame.showDice;
     playGame.showDice = function(att,att_color,def,def_color){
         sendDiceToHubot(getPlayer(),att,def);
+        //storeDice(getPlayer(),att,att_color,def,def_color);
         return oldShowDice.call(this,att,att_color,def,def_color);
     };
 
@@ -460,6 +515,7 @@ $(document).ready(function(){
 
     var oldRunUpdates = playGame.runUpdates;
     playGame.runUpdates = function(result){
+        storeUpdate(result);
         if(result.winner){
             signalToHubot(result.winner.names, true);
             clearInterval(playerPollInterval);
@@ -538,7 +594,7 @@ $(document).ready(function(){
         }).toArray();
         return winners;
     }
-    
+
     var oldShowNotification = playGame.showNotificationBanner;
     playGame.showNotificationBanner = function(color, message){
         switch(message){
@@ -567,7 +623,7 @@ $(document).ready(function(){
     pollPlayer();
     // fallback to polling at 30s interval if change detection doesn't work
     playerPollInterval = setInterval(pollPlayer,30000);
-    
+
     setTimeout(pollTreaties,2000);
     // poll treaties at a 15 second interval
     treatyPollInterval = setInterval(pollTreaties,15000);
