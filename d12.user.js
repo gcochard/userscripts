@@ -595,7 +595,7 @@ $(document).ready(function(){
         var winners = $('td.status.winner').parent().find(':nth(3)').map(function(i,w){
             return $(w).text();
         }).toArray();
-        return winners;
+        return winners.length?winners:null;
     }
 
     var oldShowNotification = playGame.showNotificationBanner;
@@ -613,8 +613,13 @@ $(document).ready(function(){
         if(!curPlayer){
             curPlayer = newPlayer;
             if(!newPlayer){
-                curPlayer = detectWinner();
-                return signalToHubot(curPlayer,true);
+                var winner = detectWinner();
+                if(winner){
+                    return signalToHubot(winner,true);
+                } else {
+                    // something is stale with d12
+                    return;
+                }
             }
             signalToHubot(curPlayer);
         }
