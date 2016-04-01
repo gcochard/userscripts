@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.5.8
+// @version      1.5.9
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -477,6 +477,30 @@ $(document).ready(function(){
     fetchDiceFromHubot();
     setInterval(fetchDiceFromHubot, 30000);
 
+    function signalChangeToHubot(change,player){
+        'use strict';
+        if(!player){
+            return;
+        }
+
+        $.ajax({
+            url: hubotLocation+'push'+change,
+            method: 'POST',
+            success: function(){
+                console.log(arguments);
+            },
+            failure: function(){
+                console.error(arguments);
+            },
+            data: {
+                user: player
+            }
+        });
+    }
+
+    var signalTurnStartToHubot = signalChangeToHubot.bind(null,'startturn');
+    var signalTurnEndToHubot = signalChangeToHubot.bind(null,'endturn');
+
     //var oldSendAttack = playGame.sendAttack;
     playGame.sendAttack = function(){
         var ab = $('.attack-button');
@@ -498,6 +522,20 @@ $(document).ready(function(){
                 }
             };
         })(this));
+    };
+
+    var oldBeginTurn = playGame.beginTurn;
+    playGame.beginTurn = function(){
+        var me = detectMe();
+        oldBeginTurn.call(playGame);
+        signalTurnStartToHubot(me);
+    };
+
+    var oldEndTurn = playGame.endTurn;
+    playGame.endTurn = function(){
+        var me = detectMe();
+        oldEndTurn.call(playGame);
+        signalTurnEndToHubot(me);
     };
 
     var oldShowDice = playGame.showDice;
