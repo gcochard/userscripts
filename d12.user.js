@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.5.9
+// @version      1.5.10
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -527,15 +527,23 @@ $(document).ready(function(){
     var oldBeginTurn = playGame.beginTurn;
     playGame.beginTurn = function(){
         var me = detectMe();
-        oldBeginTurn.call(playGame);
         signalTurnStartToHubot(me);
+        return oldBeginTurn.call(playGame);
     };
 
     var oldEndTurn = playGame.endTurn;
     playGame.endTurn = function(){
         var me = detectMe();
-        oldEndTurn.call(playGame);
         signalTurnEndToHubot(me);
+        return oldEndTurn.call(playGame);
+    };
+
+    var oldInitializeTurn = playGame.initializeTurn;
+    playGame.initializeTurn = function(){
+        if(this.myTurn.step == 2 && this.gameState.players[this.me.player_id].pending_reinforcements == 0){
+            return window.location.reload();
+        }
+        return oldInitializeTurn.call(playGame);
     };
 
     var oldShowDice = playGame.showDice;
