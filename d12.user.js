@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         D12 turn checker for slack
 // @namespace    https://hubot-gregcochard.rhcloud.com/hubot
-// @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
+// @updateURL    https://cdn.rawgit.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.5.10
+// @version      1.5.11
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -285,19 +285,19 @@ $(document).ready(function(){
 
     function storeDice(p, a, ac, d, dc){
         var game = window.location.pathname.split('/').pop();
-        var ls = window.localStorage.getItem('diceStore');
         var entry = {p: p, a: a, ac: ac, d: d, dc: dc, t: Date.now()};
-        if(ls){
-            ls = JSON.parse(ls);
-            if(!ls[game]){
-                ls[game] = [];
-            }
-        } else {
-            ls = {};
-            ls[game] = [];
+        if(store.exists(game)){
+            store.get(game,function(l){
+                l.push(entry);
+                l.save();
+            });
+        }/* else {
+            store = {};
+            store[game] = [];
         }
         ls[game].push(entry);
         window.localStorage.setItem('diceStore',JSON.stringify(ls));
+        */
     }
 
     function storeUpdate(u){
