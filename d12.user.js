@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.6.6
+// @version      1.6.7
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -391,7 +391,7 @@ $(document).ready(function(){
     var $dicestats = $('#notifications').clone().attr({
         id: 'dicestatslink',
         class: 'dice notifications',
-        style: 'position:relative;'
+        style: 'position:relative;top:300px;'
     }).html('');
     var game = window.location.pathname.split('/').pop();
     $dicestats.html('<a target="_blank" href="http://github.gregcochard.com/dice-viz/dice-viz.html?'+game+'">Dice Stats</a>');
@@ -415,7 +415,7 @@ $(document).ready(function(){
         class:'hud notifications',
         style:'overflow:scroll;height:300px;width:250px;top:0px;left:0px;position:relative;'
     }).html('');
-    $hud.html('<span>Territories: </span><ul id="colors"></ul><span>Troops: </span><ul id="counts"></ul>');
+    $hud.html('<span>Territories: </span><ul class="notifications" id="colors"></ul><span>Troops: </span><ul class="notifications" id="counts"></ul>');
     $hudContainer.append($hud);
     var $summary = $dicestats.clone().attr({
         id: 'game-summary',
