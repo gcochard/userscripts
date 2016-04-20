@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.6.4
+// @version      1.6.5
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -222,7 +222,7 @@ $(document).ready(function(){
     }
 
     // inject our treaty container
-    var $treaties = $('#notifications').clone().attr({id:'treaties',class:'treaties notifications'});
+    var $treaties = $('#notifications').clone().attr({id:'treaties',class:'treaties notifications'}).html('');
     $('#notifications').parent().append($treaties);
     $('ul.nav-list.pull-left').append('<li id="toggle-treaties">Toggle Treaties</li>');
     $('#toggle-treaties').on('click',function(){
@@ -375,7 +375,7 @@ $(document).ready(function(){
     }
 
     // inject our dice container
-    var $diceContainer = $('<div></div>').clone().attr({
+    var $diceContainer = $('<div></div>').attr({
         id:'dice-container',
         class:'dice',
         style:'height:350px;left:0px;position:fixed;'
@@ -385,14 +385,14 @@ $(document).ready(function(){
         id:'dice',
         class:'dice notifications',
         style:'overflow:scroll;height:300px;width:250px;top:0px;'
-    });
+    }).html('');
     $diceContainer.append($dice);
 
     var $dicestats = $('#notifications').clone().attr({
         id: 'dicestatslink',
         class: 'dice notifications',
         style: 'top:300px;left:0px;position:fixed;'
-    });
+    }).html('');
     var game = window.location.pathname.split('/').pop();
     $dicestats.html('<a target="_blank" href="http://github.gregcochard.com/dice-viz/dice-viz.html?'+game+'">Dice Stats</a>');
     $diceContainer.append($dicestats);
@@ -405,27 +405,27 @@ $(document).ready(function(){
 
     var fog = $('.game-settings:last strong:nth(2)').text().toLowerCase() === 'yes';
 
-    var $hudContainer = $('#dice-container').clone().attr({
+    var $hudContainer = $('<div></div>').attr({
         id:'hud-container',
-        class:'hud notifications',
+        class:'hud',
         style:'height:400px;top:400px;left:0px;position:fixed;'
     });
     var $hud = $('#dice').clone().attr({
         id:'hud',
         class:'hud notifications',
         style:'overflow:scroll;height:300px;width:250px;top:0px;left:0px;position:fixed;'
-    });
+    }).html('');
     $hud.html('<span>Territories: </span><ul id="colors"></ul><span>Troops: </span><ul id="counts"></ul>');
     $hudContainer.append($hud);
     var $summary = $dicestats.clone().attr({
         id: 'game-summary',
         style: 'top:330px;left:0px;position:fixed;'
-    }).html('<a href="http://github.gregcochard.com/dice-viz/summary-viz.html?'+game+'">Game Summary</a>');
+    }).html('<a target="_blank" href="http://github.gregcochard.com/dice-viz/summary-viz.html?'+game+'">Game Summary</a>');
     $hudContainer.append($summary);
     var $replay = $summary.clone().attr({
         id: 'game-replay',
         style: 'top:360px;left:0px;position:fixed;'
-    }).html('<a href="http://github.gregcochard.com/dice-viz/replay-viz.html?'+game+'">Game Replay</a>');
+    }).html('<a target="_blank" href="http://github.gregcochard.com/dice-viz/replay-viz.html?'+game+'">Game Replay</a>');
     $hudContainer.append($replay);
     $('#notifications').parent().append($hudContainer);
 
