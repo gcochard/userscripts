@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.6.7
+// @version      1.6.8
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -412,10 +412,10 @@ $(document).ready(function(){
     });
     var $hud = $('#dice').clone().attr({
         id:'hud',
-        class:'hud notifications',
+        class:'hud',
         style:'overflow:scroll;height:300px;width:250px;top:0px;left:0px;position:relative;'
     }).html('');
-    $hud.html('<span>Territories: </span><ul class="notifications" id="colors"></ul><span>Troops: </span><ul class="notifications" id="counts"></ul>');
+    $hud.html('<li><span>Territories: </span><ul class="notifications" id="colors"></ul></li><li><span>Troops: </span><ul class="notifications" id="counts"></ul></li>');
     $hudContainer.append($hud);
     var $summary = $dicestats.clone().attr({
         id: 'game-summary',
