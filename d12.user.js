@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.6.10
+// @version      1.6.11
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -711,9 +711,8 @@ $(document).ready(function(){
             signalToHubot(curPlayer);
         }
     }
-    pollPlayer();
-    // fallback to polling at 30s interval if change detection doesn't work
-    playerPollInterval = setInterval(pollPlayer,30000);
+    // fallback to polling at 60s interval if change detection doesn't work
+    playerPollInterval = setInterval(pollPlayer,60000);
 
     setTimeout(pollTreaties,2000);
     // poll treaties at a 15 second interval
