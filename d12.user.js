@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.6.12
+// @version      1.6.13
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -683,11 +683,8 @@ $(document).ready(function(){
 
     var oldShowNotification = playGame.showNotificationBanner;
     playGame.showNotificationBanner = function(color, message){
-        switch(message){
-        case 'Turn finished.':
-            pollPlayer();
-            break;
-        }
+        // defer polling until after the notification banner is shown
+        setTimeout(pollPlayer,20);
         return oldShowNotification.apply(this,Array.prototype.slice.call(arguments));
     };
 
