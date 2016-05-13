@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.6.11
+// @version      1.6.12
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -94,7 +94,7 @@ $(document).ready(function(){
         return me;
     }
 
-    var signalToHubot = _.debounce(function chattySignalToHubot(player,ended){
+    function signalToHubot(player,ended){
         'use strict';
         if(player instanceof Array){
             var valid = true;
@@ -133,7 +133,7 @@ $(document).ready(function(){
                 ended: ended
             }
         });
-    }, 5000);
+    }
 
     function signalJoinToHubot(player){
         'use strict';
