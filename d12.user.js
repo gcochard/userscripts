@@ -653,12 +653,8 @@ $(document).ready(function(){
         players = players.map(function(idx,v){
             var $v = $(v);
             // set the color of the player
-            var color = $v.parent().parent().children(':last').children(':last').children(':last').text();
-            // if colorblind settings off, do this instead
-            if(!color){
-                color = $v.parent().parent().children(':last').children(':last').attr('src').split('/').pop().split('.')[0];
-                color = colorMap[color];
-            }
+            var color = $v.parent().parent().children(':last').find('img').attr('src').split('/').pop().split('.')[0];
+            color = colorMap[color];
             playerColors[$v.text()] = color.toLowerCase();
             playerColors[color.toLowerCase()] = $v.text()
             return $v.html();
