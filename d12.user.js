@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.6.14
+// @version      1.6.15
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -609,7 +609,7 @@ $(document).ready(function(){
         }
         var colors = {};
         var counts = {};
-        $('div.tt-color').each(function(idx,el){
+        function eachColor(idx,el){
             el = $(el);
             var color = el.attr('class').replace(/.*tc-(fog|[\d]).*/,'$1');
             color = colorMap[color];
@@ -618,8 +618,16 @@ $(document).ready(function(){
             var count = el.find('a').text()|0;
             counts[color] = counts[color] || 0;
             counts[color] += count;
-        });
+        }
+        if($('div.tt-color').length){
+            $('div.tt-color').each(eachColor);
+        } else if($('div.territory-large').length){
+            $('div.territory-large').each(eachColor);
+        } else if($('div.territory-small').length){
+            $('div.territory-small').each(eachColor);
+        }
         function mapCount(count,color){
+            console.log('mapCount count: %s, color: %s', count, color);
             return '<li>' + playerColors[color] + ': ' + count + '</li>';
         }
         $('#hud #colors').html(_.map(colors,mapCount));
