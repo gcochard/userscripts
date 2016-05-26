@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.6.18
+// @version      1.6.19
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -87,12 +87,14 @@ $(document).ready(function(){
         return colors[idx];
     }
 
+    var me = '';
     function detectMe(){
-        var me = diveBuddy(playGame,'me.username','');
+        me = diveBuddy(playGame,'me.username','');
 
         if(!me){
             me = $('.nav-list.pull-left a:first').text();
         }
+        console.log('me: %s',me);
         return me;
     }
 
@@ -470,10 +472,11 @@ $(document).ready(function(){
         signalStartToHubot(getStarter());
     }
 
-    var me = detectMe();
+    detectMe();
 
     function populateDiceGui(dice){
         fog = $('.game-settings:last strong:nth(2)').text().toLowerCase() === 'yes';
+        detectMe();
         var oldCount = $('#dice li').length, newCount = 0;
         if(!(dice instanceof Array)){
             console.log('no dice for this game yet :(');
@@ -497,7 +500,12 @@ $(document).ready(function(){
     }
 
     function fetchDiceFromHubot(player){
+        fog = $('.game-settings:last strong:nth(2)').text().toLowerCase() === 'yes';
         player = player || detectMe();
+        if(!fog || !player){
+            clearInterval(diceInt);
+            return setTimeout(fetchDiceFromHubot.bind(null,player), 1000);
+        }
         var game = window.location.pathname.split('/').pop();
         /*
         if(fog){
@@ -512,9 +520,10 @@ $(document).ready(function(){
 
             }
         });
+        diceInt = setInterval(fetchDiceFromHubot, 30000);
     }
     fetchDiceFromHubot();
-    setInterval(fetchDiceFromHubot, 30000);
+    var diceInt = setInterval(fetchDiceFromHubot, 30000);
 
     function signalChangeToHubot(change,player){
         'use strict';
@@ -565,14 +574,14 @@ $(document).ready(function(){
 
     var oldBeginTurn = playGame.beginTurn;
     playGame.beginTurn = function(){
-        var me = detectMe();
+        me = detectMe();
         signalTurnStartToHubot(me);
         return oldBeginTurn.call(playGame);
     };
 
     var oldEndTurn = playGame.endTurn;
     playGame.endTurn = function(){
-        var me = detectMe();
+        me = detectMe();
         signalTurnEndToHubot(me);
         return oldEndTurn.call(playGame);
     };
@@ -594,7 +603,7 @@ $(document).ready(function(){
 
     $('.join-game-submit').on('click',function jointrigger(){
     $('.join-game-submit').off('click',jointrigger);
-        var me = detectMe();
+        me = detectMe();
         if(!me){
             return setTimeout(jointrigger,100);
         }
