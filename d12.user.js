@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.6.23
+// @version      1.6.24
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -231,7 +231,12 @@ $(document).ready(function(){
     $('ul.nav-list.pull-left').append('<li id="toggle-treaties">Toggle Treaties</li>');
     $('#toggle-treaties').on('click',function(){
         $treaties.toggle();
+        window.localStorage.setItem('treaty-state', treatyState === 'hidden'?'shown':'hidden');
     });
+    var treatyState = window.localStorage.getItem('treaty-state');
+    if(treatyState === 'hidden'){
+        $treaties.toggle();
+    }
 
     function showTreaties(data){
         'use strict';
@@ -405,7 +410,12 @@ $(document).ready(function(){
 
     $('#toggle-dice').on('click',function(){
         $diceContainer.toggle();
+        window.localStorage.setItem('dice-state', diceState === 'hidden'?'shown':'hidden');
     });
+    var diceState = window.localStorage.getItem('dice-state');
+    if(diceState === 'hidden'){
+        $diceContainer.toggle();
+    }
 
     var fog = $('.game-settings:last strong:nth(2)').text().toLowerCase() === 'yes';
 
@@ -439,7 +449,12 @@ $(document).ready(function(){
     $('ul.nav-list.pull-left').append('<li id="toggle-hud">Toggle HUD</li>');
     $('#toggle-hud').on('click',function(){
         $hudContainer.toggle();
+        window.localStorage.setItem('hud-state', diceState === 'hidden'?'shown':'hidden');
     });
+    var hudState = window.localStorage.getItem('hud-state');
+    if(hudState === 'hidden'){
+        $hudContainer.toggle();
+    }
 
     /*
     var $larger = $('#map-larger').clone().attr({
