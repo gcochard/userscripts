@@ -521,47 +521,22 @@ $(document).ready(function(){
         populateDiceGui(currDice);
     }
 
-    function fetchDiceFromHubot(player){
-        fog = $('.game-settings:last strong:nth(2)').text().toLowerCase() === 'yes';
-        player = player || detectMe();
-        if((fog !== true && fog !== false) || !player){
-            clearInterval(diceInt);
-            return setTimeout(fetchDiceFromHubot.bind(null,player), 1000);
-        }
-        var game = window.location.pathname.split('/').pop();
-        /*
-        if(fog){
-            return populateDiceGui(fetchLocalDice());
-        }
-        */
-        $.ajax({
-            url: hubotLocation+'dice?game='+game,
-            method: 'GET',
-            success: populateDiceGui,
-            failure: function(){
-
-            }
-        });
-        if(!diceInt){
-            diceInt = setInterval(fetchDiceFromHubot, 30000);
-        }
-    }
-    fetchDiceFromHubot();
-    var diceInt = setInterval(fetchDiceFromHubot, 30000);
-
     (function setupDiceStream(){
       var source = new EventSource(hubotLocation + 'dicestream');
-
-      source.addEventListener('message', function(e) {
+      source.addEventListener('handshake', function(e) {
           console.log(e);
+      }, false);
+
+      source.addEventListener('dice', function(e) {
           var roll = {};
-          if(e.lastEventId == 1){
-              // handshake
-              return;
-          }
           try{
               roll = JSON.parse(e.data);
-              updateDiceGui(roll);
+              if(roll instanceof Array){
+                  // call for each of the items in the array
+                  roll.forEach(updateDiceGui);
+              } else {
+                  updateDiceGui(roll);
+              }
           } catch(er){
               console.error(er);
           }
