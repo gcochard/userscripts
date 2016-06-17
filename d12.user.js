@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.6.22
+// @version      1.6.23
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -473,6 +473,7 @@ $(document).ready(function(){
     }
 
     detectMe();
+    var currDice = [];
 
     function populateDiceGui(dice){
         fog = $('.game-settings:last strong:nth(2)').text().toLowerCase() === 'yes';
@@ -482,6 +483,7 @@ $(document).ready(function(){
             console.log('no dice for this game yet :(');
             return;
         }
+        currDice = dice;
         var dicehtml = dice.map(function(roll){
             if(roll.player !== me && fog){
                 return;
@@ -497,6 +499,11 @@ $(document).ready(function(){
             $dice.html(dicehtml);
             $dice.scrollTop($dice.prop('scrollHeight'));
         }
+    }
+
+    function updateDiceGui(roll){
+        currDice.push(roll);
+        populateDiceGui(currDice);
     }
 
     function fetchDiceFromHubot(player){
@@ -526,6 +533,27 @@ $(document).ready(function(){
     }
     fetchDiceFromHubot();
     var diceInt = setInterval(fetchDiceFromHubot, 30000);
+
+    (function setupDiceStream(){
+      var source = new EventSource(hubotLocation + 'dicestream');
+
+      source.addEventListener('message', function(e) {
+          console.log(e);
+          var roll = {};
+          if(e.lastEventId == 1){
+              // handshake
+              return;
+          }
+          try{
+              roll = JSON.parse(e.data);
+              updateDiceGui(roll);
+          } catch(er){
+              console.error(er);
+          }
+
+      }, false);
+
+    }());
 
     function signalChangeToHubot(change,player){
         'use strict';
