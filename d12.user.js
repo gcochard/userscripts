@@ -4,7 +4,7 @@
 // @updateURL    https://gist.githubusercontent.com/gcochard/1b6e94b6ae6e2f60a6d8/raw/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.6.26
+// @version      1.6.27
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -96,6 +96,20 @@ $(document).ready(function(){
         }
         console.log('me: %s',me);
         return me;
+    }
+    var myTeam = 0;
+    var myTeammates = [];
+    function detectTeam(){
+        myTeam = playGame.me.team;
+        var players = Object.keys(playGame.players).map(function(i){
+            return playGame.players[i];
+        }).filter(function(p){
+            return p.team == myTeam;
+        }).map(function(p){
+            return p.username;
+        });
+        myTeammates = players;
+        return players;
     }
 
     function signalToHubot(player,ended){
@@ -488,11 +502,13 @@ $(document).ready(function(){
     }
 
     detectMe();
+    detectTeam();
     var currDice = [];
 
     function populateDiceGui(dice){
         fog = $('.game-settings:last strong:nth(2)').text().toLowerCase() === 'yes';
         detectMe();
+        detectTeam();
         var oldCount = $('#dice li').length, newCount = 0;
         if(!(dice instanceof Array)){
             console.log('no dice for this game yet :(');
@@ -500,7 +516,7 @@ $(document).ready(function(){
         }
         currDice = dice;
         var dicehtml = dice.map(function(roll){
-            if(roll.player !== me && fog){
+            if(myTeammates.indexOf(roll.player) === -1 && fog){
                 return;
             }
             var color = colorDice(roll);
