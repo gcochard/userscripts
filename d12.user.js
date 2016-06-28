@@ -4,7 +4,7 @@
 // @updateURL    https://github.gregcochard.com/userscripts/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://npmcdn.com/dive-buddy
-// @version      1.6.28
+// @version      1.6.29
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -101,6 +101,10 @@ $(document).ready(function(){
     var myTeammates = [];
     function detectTeam(){
         myTeam = playGame.me.team;
+        if(!myTeam){
+            // not a team game, bail
+            return;
+        }
         var players = Object.keys(playGame.players).map(function(i){
             return playGame.players[i];
         }).filter(function(p){
