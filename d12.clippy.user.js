@@ -3,7 +3,7 @@
 // @namespace    https://hubot-gregcochard.rhcloud.com/hubot
 // @updateURL    https://github.gregcochard.com/userscripts/d12.clippy.user.js
 // @require      https://npmcdn.com/async
-// @version      1.0.0
+// @version      1.0.1
 // @description  injects the real script so we can debug with firebug
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -40,7 +40,7 @@ function injectTag(tag, done){
     };
     document.getElementsByTagName('head')[0].appendChild(e);
 }
-injectTag({name:'link', rel:'stylesheet', type:'text/css', href:'clippy.css', media:'all'});
+injectTag({name:'link', rel:'stylesheet', type:'text/css', href:'https://github.gregcochard.com/userscripts/clippy.css', media:'all'});
 function injectSources(src, done){
   var e = document.createElement('script');
   e.src = src;
