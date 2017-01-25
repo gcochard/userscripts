@@ -3,8 +3,8 @@
 // @namespace    https://hubot-gregcochard.rhcloud.com/hubot
 // @updateURL    https://github.gregcochard.com/userscripts/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
-// @require      https://npmcdn.com/dive-buddy
-// @version      1.6.30
+// @require      https://unpkg.com/dive-buddy
+// @version      1.6.31
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
