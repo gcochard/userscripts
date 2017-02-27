@@ -4,7 +4,7 @@
 // @updateURL    https://github.gregcochard.com/userscripts/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://unpkg.com/dive-buddy
-// @version      1.6.32
+// @version      1.6.33
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -75,10 +75,10 @@ $(document).ready(function(){
     getPlayer();
     function colorDice(roll){
         var colors = ['green','yellow','red'], idx = 0;
-        if(roll.defend.length===0 || +roll.attack[0] <= +roll.defend[0]){
+        if(!roll.defend || +roll.attack[0] <= +roll.defend[0]){
             idx++;
         }
-        if(roll.attack.length <= 1 || roll.defend.length <= 1){
+        if(roll.attack.length <= 1 || !roll.defend || roll.defend.length <= 1){
             return colors[idx?idx+1:0];
         }
         if(+roll.attack[1] <= +roll.defend[1]){
