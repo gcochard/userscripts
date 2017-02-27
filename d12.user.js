@@ -75,13 +75,13 @@ $(document).ready(function(){
     getPlayer();
     function colorDice(roll){
         var colors = ['green','yellow','red'], idx = 0;
-        if(+roll.attack[0]<=+roll.defend[0]){
+        if(roll.defend.length===0 || +roll.attack[0] <= +roll.defend[0]){
             idx++;
         }
-        if(roll.attack.length === 1 || roll.defend.length === 1){
+        if(roll.attack.length <= 1 || roll.defend.length <= 1){
             return colors[idx?idx+1:0];
         }
-        if(+roll.attack[1]<=+roll.defend[1]){
+        if(+roll.attack[1] <= +roll.defend[1]){
             idx++;
         }
         return colors[idx];
