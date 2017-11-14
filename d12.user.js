@@ -4,7 +4,7 @@
 // @updateURL    https://github.gregcochard.com/userscripts/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://unpkg.com/dive-buddy
-// @version      1.6.38
+// @version      1.7.1
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -566,6 +566,10 @@ $(document).ready(function(){
 
       }, false);
 
+      source.addEventListener('treaty', function(e) {
+        pollTreaties();
+      }, false);
+
       // this will reconnect a completely failed connection, not one that is retrying itself
       function reconnect(){
           if(source.readyState === EventSource.DISCONNECTED){
@@ -722,7 +726,7 @@ $(document).ready(function(){
         }
         var currBrokenPlayer = $('td.turn').parent().find('.name > a');
         if(currBrokenPlayer.text() != newPlayer){
-          currBrokenPlayer.removeClass('turn');
+          $('td.turn').removeClass('turn');
           $('td.status-icon').parent().find('.name > a').filter((i,el)=>{return $(el).text() == newPlayer;}).parent().parent().find('td.status-icon').addClass('turn');
         }
         /* also broken
@@ -769,6 +773,6 @@ $(document).ready(function(){
     playerPollInterval = setInterval(pollPlayer,60000);
 
     setTimeout(pollTreaties,2000);
-    // poll treaties at a 15 second interval
-    treatyPollInterval = setInterval(pollTreaties,15000);
+    // going to transition this to the dice stream
+    //treatyPollInterval = setInterval(pollTreaties,30000);
 });
