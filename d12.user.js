@@ -4,7 +4,7 @@
 // @updateURL    https://github.gregcochard.com/userscripts/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://unpkg.com/dive-buddy
-// @version      1.6.36
+// @version      1.6.37
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -708,11 +708,21 @@ $(document).ready(function(){
         if(!players.length){
             return;
         }
-        var newPlayer = $('td.turn').parent().find('.name > a');
+        /* this is broken currently
+         * var newPlayer = $('td.turn').parent().find('.name > a');
+         */
+        var newPlayerColor = Array.from($('div.side-box-player div.arrow').parent()[0].classList).map(function(c){
+          return c.indexOf('player-bg-') == 0? c.replace('player-bg-','') : null;
+        }).filter(c => {
+          return !!c;
+        })[0];
+        var newPlayer = playerColors[colorMap[newPlayerColor]];
         if(!newPlayer){
             return;
         }
-        newPlayer = newPlayer.html();
+        /* also broken
+         * newPlayer = newPlayer.html();
+         */
         return newPlayer;
     }
 
