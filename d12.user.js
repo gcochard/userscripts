@@ -4,7 +4,7 @@
 // @updateURL    https://github.gregcochard.com/userscripts/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://unpkg.com/dive-buddy
-// @version      1.7.1
+// @version      1.7.2
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -68,7 +68,7 @@ var users = {
   }
   , playerPollInterval
   , treatyPollInterval
-  , hubotLocation = 'https://hubot-180623.appspot.com/hubot/';
+  , hubotLocation = 'https://chubot.gregcochard.com/hubot/';
 
 $(document).ready(function(){
     'use strict';
