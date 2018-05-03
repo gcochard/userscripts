@@ -4,7 +4,7 @@
 // @updateURL    https://github.gregcochard.com/userscripts/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://unpkg.com/dive-buddy
-// @version      1.7.2
+// @version      1.7.3
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -108,13 +108,7 @@ $(document).ready(function(){
             // not a team game, bail
             return;
         }
-        var players = Object.keys(playGame.players).map(function(i){
-            return playGame.players[i];
-        }).filter(function(p){
-            return p.team == myTeam;
-        }).map(function(p){
-            return p.username;
-        });
+        var players = Object.keys(playGame.players).map(i => playGame.players[i]).filter(p => p.team == myTeam).map(p => p.username);
         myTeammates = players;
         return players;
     }
@@ -263,15 +257,10 @@ $(document).ready(function(){
         'use strict';
         //console.log(data);
         var newTreatyIds = [];
-        var oldTreatyIds = $('#treaties').find('li').map(function(i,t){
-            return $(t).attr('id');
-        });
+        var oldTreatyIds = $('#treaties').find('li').map((i,t) => $(t).attr('id'));
         Object.keys(data).forEach(function(id){
             var t = data[id];
-            var partnersWithColors = t.partners.map(function(p){
-                var text = '<b style="color:'+playerColors[users[p.toLowerCase()]]+';">'+p+'</b>';
-                return text;
-            });
+            var partnersWithColors = t.partners.map(p => `<b style="color:${playerColors[users[p.toLowerCase()]]};">${p}</b>`);
             newTreatyIds.push('treaty-'+t.id);
             // build out the treaty html
             var treatyHtml = (t.partners.length === 1 ? '<i>PENDING:</i> ':'') + 'Treaty ' + t.id + ': ' +t.terms + '<hr>' + partnersWithColors.join(', ');
@@ -522,15 +511,13 @@ $(document).ready(function(){
             return;
         }
         currDice = dice;
-        var dicehtml = dice.map(function(roll){
+        var dicehtml = dice.map(roll => {
             if(myTeammates.indexOf(roll.player) === -1 && fog){
                 return;
             }
             var color = colorDice(roll);
-            return '<li style="color: '+color+'">'+roll.player+': attack('+roll.attack.join(', ')+') defend('+(roll.defend||[]).join(', ')+')</li>';
-        }).filter(function(r){
-            return !!r;
-        });
+            return `<li style="color: ${color}">${roll.player}: attack(${roll.attack.join(', ')}) defend(${(roll.defend||[]).join(', ')})</li>`;
+        }).filter(r => !!r);
         newCount = dicehtml.length;
         dicehtml = dicehtml.join('');
         if(oldCount !== newCount){
@@ -670,7 +657,7 @@ $(document).ready(function(){
             $('div.territory-small').each(eachColor);
         }
         function mapCount(count,color){
-            return '<li>' + playerColors[color] + ': ' + count + '</li>';
+            return `<li>${playerColors[color]}: ${count}</li>`;
         }
         $('#hud #colors').html(_.map(colors,mapCount));
         $('#hud #counts').html(_.map(counts,mapCount));
@@ -683,9 +670,9 @@ $(document).ready(function(){
         // clone the object
         Object.keys(players).forEach(function(p){ newDead.push(players[p]); });
         // filter out alives
-        newDead = newDead.filter(function(p){ return !p.alive; });
+        newDead = newDead.filter(p => !p.alive);
         // now translate to slack usernames
-        newDead = newDead.map(function(p){ return users[p.username]; });
+        newDead = newDead.map(p => users[p.username]);
         if(currDead.length !== newDead.length){
             // save it...
             currDead = newDead;
@@ -700,7 +687,7 @@ $(document).ready(function(){
 
     function getPlayer(){
         players = $('tr > .name > a');
-        players = players.map(function(idx,v){
+        players = players.map((idx,v) => {
             var $v = $(v);
             // set the color of the player
             var color = $v.parent().parent().children(':last').find('img').attr('src').split('/').pop().split('.')[0];
@@ -715,19 +702,21 @@ $(document).ready(function(){
         /* this is broken currently
          * var newPlayer = $('td.turn').parent().find('.name > a');
          */
-        var newPlayerColor = Array.from($('div.side-box-player div.arrow').parent()[0].classList).map(function(c){
-          return c.indexOf('player-bg-') == 0? c.replace('player-bg-','') : null;
-        }).filter(c => {
-          return !!c;
-        })[0];
-        var newPlayer = playerColors[colorMap[newPlayerColor]];
+        try {
+            var newPlayerColor = Array.from($('div.side-box-player div.arrow').parent()[0].classList).map(
+                c => c.indexOf('player-bg-') == 0? c.replace('player-bg-','') : null
+            ).filter(c => !!c)[0];
+            var newPlayer = playerColors[colorMap[newPlayerColor]];
+        } catch(e){
+            return;
+        }
         if(!newPlayer){
             return;
         }
         var currBrokenPlayer = $('td.turn').parent().find('.name > a');
         if(currBrokenPlayer.text() != newPlayer){
           $('td.turn').removeClass('turn');
-          $('td.status-icon').parent().find('.name > a').filter((i,el)=>{return $(el).text() == newPlayer;}).parent().parent().find('td.status-icon').addClass('turn');
+          $('td.status-icon').parent().find('.name > a').filter((i,el) => $(el).text() == newPlayer).parent().parent().find('td.status-icon').addClass('turn');
         }
         /* also broken
          * newPlayer = newPlayer.html();
@@ -736,9 +725,7 @@ $(document).ready(function(){
     }
 
     function detectWinner(){
-        var winners = $('td.status.winner').parent().find(':nth(3)').map(function(i,w){
-            return $(w).text();
-        }).toArray();
+        var winners = $('td.status.winner').parent().find(':nth(3)').map((i,w) => $(w).text()).toArray();
         return winners.length?winners:null;
     }
 
