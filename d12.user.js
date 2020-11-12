@@ -4,7 +4,7 @@
 // @updateURL    https://github.gregcochard.com/userscripts/d12.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js
 // @require      https://unpkg.com/dive-buddy
-// @version      1.7.5
+// @version      1.7.6
 // @description  calls hubot with the current player and other features
 // @author       Greg Cochard
 // @match        http://dominating12.com/game/*
@@ -68,7 +68,8 @@ var users = {
   }
   , playerPollInterval
   , treatyPollInterval
-  , hubotLocation = 'https://chubot.gregcochard.com/hubot/';
+  , hubotLocation = 'https://chubot.gregcochard.com/hubot/'
+  , gameId = window.location.pathname.split('/').pop();
 
 $(document).ready(function(){
     'use strict';
@@ -149,7 +150,7 @@ $(document).ready(function(){
             data: {
                 user: player,
                 from: detectMe(),
-                game: window.location.pathname.split('/').pop(),
+                game: gameId,
                 ended: ended
             }
         });
@@ -171,7 +172,8 @@ $(document).ready(function(){
                 console.error(arguments);
             },
             data: {
-                user: player
+                user: player,
+                game: gameId
             }
         });
     }
@@ -193,7 +195,8 @@ $(document).ready(function(){
             },
             data: {
                 user: starter,
-                from: detectMe()
+                from: detectMe(),
+                game: gameId
             }
         });
     }
@@ -209,7 +212,8 @@ $(document).ready(function(){
                 console.error(arguments);
             },
             data: {
-                deaths: deaths
+                deaths: deaths,
+                game: gameId
             }
         });
     }
@@ -304,7 +308,7 @@ $(document).ready(function(){
     }
 
     function storeDice(p, a, ac, d, dc){
-        var game = window.location.pathname.split('/').pop();
+        var game = gameId;
         var ls = window.localStorage.getItem('diceStore');
         var entry = {p: p, a: a, ac: ac, d: d, dc: dc, t: Date.now()};
         if(ls){
@@ -321,7 +325,7 @@ $(document).ready(function(){
     }
 
     function storeUpdate(u){
-        var game = window.location.pathname.split('/').pop();
+        var game = gameId;
         var ls = window.localStorage.getItem('updateStore');
         var entry = {u: u, t: Date.now()};
         if(ls){
@@ -338,7 +342,7 @@ $(document).ready(function(){
     }
 
     function fetchLocalDice(){
-        var game = window.location.pathname.split('/').pop();
+        var game = gameId;
         var ls = window.localStorage.getItem('diceStore');
         return diveBuddy(JSON.parse(ls),game,null);
     }
@@ -389,7 +393,8 @@ $(document).ready(function(){
             data: {
                 player: player,
                 attack: attack,
-                defend: defend
+                defend: defend,
+                game: gameId
             }
         });
     }
@@ -413,7 +418,7 @@ $(document).ready(function(){
         class: 'dice notifications',
         style: 'position:relative;top:300px;'
     }).html('');
-    var game = window.location.pathname.split('/').pop();
+    var game = gameId;
     $dicestats.html('<a target="_blank" href="http://github.gregcochard.com/dice-viz/dice-viz.html?'+game+'">Dice Stats</a>');
     $diceContainer.append($dicestats);
 
@@ -531,7 +536,7 @@ $(document).ready(function(){
         currDice.push(roll);
         populateDiceGui(currDice);
     }
-
+/*
     (function setupDiceStream(){
       var source = new EventSource(hubotLocation + 'dicestream');
       source.addEventListener('handshake', function(e) {
@@ -567,7 +572,7 @@ $(document).ready(function(){
       source.onerror = reconnect;
 
     }());
-
+*/
     function signalChangeToHubot(change,player){
         'use strict';
         if(!player){
@@ -584,7 +589,8 @@ $(document).ready(function(){
                 console.error(arguments);
             },
             data: {
-                user: player
+                user: player,
+                game: gameId
             }
         });
     }
